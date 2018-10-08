@@ -13,8 +13,9 @@ use CrCms\Foundation\ConnectionPool\AbstractConnectionFactory;
 use CrCms\Foundation\ConnectionPool\Contracts\ConnectionPool as ConnectionPoolContract;
 use CrCms\Foundation\ConnectionPool\Contracts\ConnectionFactory as ConnectionFactoryContract;
 use CrCms\Foundation\ConnectionPool\Contracts\Connection as ConnectionContract;
-use CrCms\Foundation\Client\Http\Guzzle\Connection;
-use CrCms\Foundation\Client\Http\Guzzle\Connector;
+use CrCms\Foundation\ConnectionPool\Contracts\Connector as ConnectorContract;
+use CrCms\Foundation\Client\Http\Guzzle\Connection as GuzzleConnection;
+use CrCms\Foundation\Client\Http\Guzzle\Connector as GuzzleConnector;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
@@ -49,14 +50,14 @@ class Factory extends AbstractConnectionFactory implements ConnectionFactoryCont
     }
 
     /**
-     * @param string $driver
-     * @return Connection
+     * @param array $config
+     * @return ConnectionContract
      */
-    protected function createConnection(array $config): Connection
+    protected function createConnection(array $config): ConnectionContract
     {
         switch ($config['driver']) {
             case 'http':
-                return new Connection($this->createConnector($config)->connect($config), $config);
+                return new GuzzleConnection($this->createConnector($config)->connect($config), $config);
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
@@ -64,13 +65,13 @@ class Factory extends AbstractConnectionFactory implements ConnectionFactoryCont
 
     /**
      * @param string $driver
-     * @return Connector
+     * @return ConnectorContract
      */
-    protected function createConnector(array $config): Connector
+    protected function createConnector(array $config): ConnectorContract
     {
         switch ($config['driver']) {
             case 'http':
-                return new Connector;
+                return new GuzzleConnector;
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
