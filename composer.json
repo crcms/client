@@ -1,32 +1,38 @@
 {
-    "name": "crcms/client",
-    "description": "CRCMS client",
-	"keywords": ["pool", "crcms"],
-	"homepage": "https://github.com/crcms/client",
-    "license": "MIT",
-    "require": {
-        "php":">=7.1",
-        "crcms/connection-pool":"dev-master"
-    },
-	"autoload": {
-        "files": [
-        ],
-        "psr-4": {
-            "CrCms\\Foundation\\Client\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "CrCms\\Foundation\\Client\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "CrCms\\Foundation\\Client\\ClientServiceProvider"
-            ],
-            "aliases": {
-            }
-        }
+  "name": "crcms/client",
+  "description": "CRCMS Client",
+  "keywords": [
+    "tcp",
+    "http",
+    "socket",
+    "crcms",
+    "swoole"
+  ],
+  "homepage": "https://github.com/crcms/client",
+  "license": "MIT",
+  "require": {
+    "php": ">=7.1",
+    "crcms/connection-pool": "dev-master"
+  },
+  "autoload": {
+    "files": [
+    ],
+    "psr-4": {
+      "CrCms\\Foundation\\Client\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CrCms\\Foundation\\Client\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CrCms\\Foundation\\Client\\ClientServiceProvider"
+      ],
+      "aliases": {
+      }
+    }
+  }
 }
