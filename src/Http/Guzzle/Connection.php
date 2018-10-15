@@ -119,8 +119,6 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
             //400+可能是请求方法或参数错误，不可视为超时或服务器error
             $this->response = $exception->getResponse();
             throw new ConnectionPoolRequestException($this, 'Request failed: ' . $exception->getMessage());
-        } finally {
-            $this->connector->close();
         }
 
         return $this;
