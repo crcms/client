@@ -47,7 +47,7 @@ class Connector extends AbstractConnector implements ConnectorContract
      */
     protected function scheme(array $settings): string
     {
-        return isset($settings['ssl']) && $settings['ssl'] ? 'https' : 'http';
+        return isset($settings['verify']) && $settings['verify'] ? 'https' : 'http';
     }
 
     /**
