@@ -9,7 +9,7 @@
 
 namespace CrCms\Foundation\Client;
 
-use CrCms\Foundation\Application;
+use Illuminate\Container\Container;
 use CrCms\Foundation\ConnectionPool\ConnectionManager;
 use CrCms\Foundation\ConnectionPool\Contracts\ConnectionFactory;
 use InvalidArgumentException;
@@ -63,9 +63,9 @@ class Manager
 
     /**
      * Manager constructor.
-     * @param Application $app
+     * @param Container $app
      */
-    public function __construct(Application $app, ConnectionFactory $factory, ?ConnectionManager $poolManager = null)
+    public function __construct(Container $app, ConnectionFactory $factory, ?ConnectionManager $poolManager = null)
     {
         $this->app = $app;
         $this->factory = $factory;

@@ -10,6 +10,7 @@
 namespace CrCms\Foundation\Client;
 
 use Illuminate\Support\ServiceProvider;
+use Laravel\Lumen\Application;
 
 /**
  * Class ClientServiceProvider
@@ -39,9 +40,12 @@ class ClientServiceProvider extends ServiceProvider
     public function boot()
     {
         //move config path
-        $this->publishes([
-            $this->packagePath . 'config' => config_path(),
-        ]);
+        if ($this->isLumen()) {
+        } else {
+            $this->publishes([
+                $this->packagePath . 'config' => config_path(),
+            ]);
+        }
     }
 
     /**
@@ -49,6 +53,10 @@ class ClientServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        if ($this->isLumen()) {
+            $this->app->configure($this->namespaceName);
+        }
+
         //merge config
         $configFile = $this->packagePath . "config/config.php";
         if (file_exists($configFile)) $this->mergeConfigFrom($configFile, $this->namespaceName);
@@ -79,6 +87,14 @@ class ClientServiceProvider extends ServiceProvider
     {
         $this->app->alias('client.factory', Factory::class);
         $this->app->alias('client.manager', Manager::class);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isLumen(): bool
+    {
+        return class_exists(Application::class) && $this->app instanceof Application;
     }
 
     /**
