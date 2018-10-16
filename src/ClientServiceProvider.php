@@ -9,6 +9,7 @@
 
 namespace CrCms\Foundation\Client;
 
+use CrCms\Foundation\ConnectionPool\PoolServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application;
 
@@ -64,6 +65,8 @@ class ClientServiceProvider extends ServiceProvider
         $this->registerAlias();
 
         $this->registerServices();
+
+        $this->app->register(PoolServiceProvider::class);
     }
 
     /**
