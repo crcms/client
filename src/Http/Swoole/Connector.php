@@ -4,6 +4,7 @@ namespace CrCms\Foundation\Client\Http\Swoole;
 
 use CrCms\Foundation\ConnectionPool\AbstractConnector;
 use CrCms\Foundation\ConnectionPool\Contracts\Connector as ConnectorContract;
+use Swoole\Coroutine\Http\Client;
 
 /**
  * Class Connector
@@ -20,14 +21,19 @@ class Connector extends AbstractConnector implements ConnectorContract
 
     /**
      * @param array $config
-     * @return Connector
+     * @return ConnectorContract
      */
-    public function connect(array $config): Connector
+    public function connect(array $config): ConnectorContract
     {
         $this->connect = new Client($config['host'], $config['port']);
         $this->connect->set($this->mergeSettings($config['settings'] ?? []));
         $this->connect->setHeaders($this->mergeHeaders([]));
         return $this;
+    }
+
+    public function close(): void
+    {
+        $this->connect->close();
     }
 
     /**

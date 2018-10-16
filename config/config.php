@@ -36,5 +36,13 @@ return [
                 'timeout' => 1,
             ],
         ],
+        'swoole_http' => [
+            'driver' => 'swoole_http',
+            'host' => '192.168.1.106',
+            'port' => 2222,
+            'settings' => [
+                'timeout' => 1,
+            ],
+        ],
     ],
 ];

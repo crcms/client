@@ -73,7 +73,7 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     public function getStatusCode(): int
     {
-        return $this->response ? $this->response->getStatusCode() : -1;
+        return $this->connector->statusCode;
     }
 
     /**
@@ -81,7 +81,7 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     public function getContent()
     {
-        return $this->response ? $this->response->getBody()->getContents() : null;
+        return $this->connector->body;
     }
 
     /**
@@ -91,20 +91,35 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     public function send(string $uri, array $data = []): AbstractConnection
     {
-        if ($this->method === 'post') {
+        /*if ($this->method === 'post') {
             $execResult = call_user_func_array([$this->connector, $this->method], [$uri, json_encode($data)]);
         } else if ($this->method === 'get') {
             $execResult = call_user_func_array([$this->connector, $this->method], [$uri]);
         } else {
-            /* 这里需要详细测试，暂时此功能不可用 */
+            // /* 这里需要详细测试，暂时此功能不可用
             $this->connector->setMethod($this->method);
             $this->connector->setData(json_encode($data));
             $execResult = call_user_func_array([$this->connector, 'execute'], [$uri]);
-        }
+        }*/
+        $this->connector->setHeaders([
+            'content-type' => 'application/json',
+        ]);
+        $this->connector->setMethod($this->method);
+        $this->connector->setData('abfdsafdsafdsafdsacdef');
+        $this->connector->execute($uri);
+//        $this->connector->post('/rand',[]);
+        dump('====================');
+        dump($this->getContent());
+        dump($this->getStatusCode());
+        dump('=======================');
 
         //加入异常连接
-        if ($this->isAbnormalConnection(!$execResult)) {
+        if ($this->isAbnormalConnection()) {
             throw new ConnectionException($this);
+        }
+
+        if ($this->connector->statusCode >= 400 && $this->connector->statusCode < 500) {
+            throw new ConnectionPoolRequestException($this);
         }
 
         return $this;
@@ -114,9 +129,9 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      * @param bool $isDead
      * @return bool
      */
-    protected function isAbnormalConnection(bool $isDead = false): bool
+    protected function isAbnormalConnection(): bool
     {
-        if (in_array($this->connector->statusCode, [-1, -2], true) || $this->connector->errCode !== 0 || $isDead === true) {
+        if (in_array($this->connector->statusCode, [-1, -2, -3], true) || $this->connector->errCode !== 0) {
             return true;
         }
 
