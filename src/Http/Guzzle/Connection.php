@@ -35,6 +35,16 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
     protected $headers = [];
 
     /**
+     * @var int
+     */
+    protected $statusCode;
+
+    /**
+     * @var mixed
+     */
+    protected $content;
+
+    /**
      * @param string $method
      * @return $this
      */
@@ -80,15 +90,35 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     public function getStatusCode(): int
     {
-        return $this->response ? $this->response->getStatusCode() : -1;
+        if (is_null($this->response)) {
+            return -1;
+        }
+
+        if (!is_null($this->statusCode)) {
+            return $this->statusCode;
+        }
+
+        $this->statusCode = $this->response->getStatusCode();
+
+        return $this->statusCode;
     }
 
     /**
      * @return mixed
      */
     public function getContent()
-    {
-        return $this->response ? $this->response->getBody()->getContents() : null;
+    {dump('content====');
+        if (is_null($this->response)) {
+            return null;
+        }
+
+        if (!is_null($this->content)) {
+            return $this->content;
+        }
+
+        $this->content = $this->response->getBody()->getContents();
+
+        return $this->content;
     }
 
     /**
