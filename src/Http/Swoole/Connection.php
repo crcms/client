@@ -20,12 +20,14 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
     /**
      * @var string
      */
-    protected $method = 'post';
+    protected $method = 'POST';
 
     /**
      * @var array
      */
-    protected $headers = [];
+    protected $headers = [
+        'Content-Type' => 'application/json',
+    ];
 
     /**
      * @param string $method
@@ -33,7 +35,7 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     public function setMethod(string $method)
     {
-        $this->method = strtolower($method);
+        $this->method = strtoupper($method);
 
         return $this;
     }
@@ -91,27 +93,18 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     public function send(string $uri, array $data = []): AbstractConnection
     {
-        /*if ($this->method === 'post') {
-            $execResult = call_user_func_array([$this->connector, $this->method], [$uri, json_encode($data)]);
-        } else if ($this->method === 'get') {
-            $execResult = call_user_func_array([$this->connector, $this->method], [$uri]);
-        } else {
-            // /* 这里需要详细测试，暂时此功能不可用
-            $this->connector->setMethod($this->method);
-            $this->connector->setData(json_encode($data));
-            $execResult = call_user_func_array([$this->connector, 'execute'], [$uri]);
-        }*/
-        $this->connector->setHeaders([
-            'content-type' => 'application/json',
-        ]);
         $this->connector->setMethod($this->method);
-        $this->connector->setData('abfdsafdsafdsafdsacdef');
-        $this->connector->execute($uri);
-//        $this->connector->post('/rand',[]);
-        dump('====================');
-        dump($this->getContent());
-        dump($this->getStatusCode());
-        dump('=======================');
+        if ($data) {
+            if (isset($this->headers['Content-Type']) && stripos($this->headers['Content-Type'], 'json')) {
+                $data = json_encode($data);
+            } else {
+                $data = http_build_query($data);
+            }
+            $this->headers['Content-Length'] = strlen($data);
+            $this->connector->setData($data);
+        }
+        $this->connector->setHeaders($this->headers);
+        $this->connector->execute('/' . ltrim($uri, '/'));
 
         //加入异常连接
         if ($this->isAbnormalConnection()) {
@@ -131,10 +124,6 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     protected function isAbnormalConnection(): bool
     {
-        if (in_array($this->connector->statusCode, [-1, -2, -3], true) || $this->connector->errCode !== 0) {
-            return true;
-        }
-
-        return false;
+        return in_array($this->connector->statusCode, [-1, -2, -3], true) || $this->connector->errCode !== 0;
     }
 }

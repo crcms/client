@@ -13,11 +13,9 @@ use Swoole\Coroutine\Http\Client;
 class Connector extends AbstractConnector implements ConnectorContract
 {
     /**
-     * @var array
+     * @var Client
      */
-    protected $defaultHeaders = [
-        'Content-Type' => 'application/json',
-    ];
+    protected $connect;
 
     /**
      * @param array $config
@@ -27,21 +25,14 @@ class Connector extends AbstractConnector implements ConnectorContract
     {
         $this->connect = new Client($config['host'], $config['port']);
         $this->connect->set($this->mergeSettings($config['settings'] ?? []));
-        $this->connect->setHeaders($this->mergeHeaders([]));
         return $this;
     }
 
+    /**
+     * @return void
+     */
     public function close(): void
     {
         $this->connect->close();
-    }
-
-    /**
-     * @param $headers
-     * @return array
-     */
-    protected function mergeHeaders($headers): array
-    {
-        return array_merge($this->defaultHeaders, $headers);
     }
 }
