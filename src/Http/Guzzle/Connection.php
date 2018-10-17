@@ -107,7 +107,7 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      * @return mixed
      */
     public function getContent()
-    {dump('content====');
+    {
         if (is_null($this->response)) {
             return null;
         }
