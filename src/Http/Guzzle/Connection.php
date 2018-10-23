@@ -24,13 +24,13 @@ use Psr\Http\Message\ResponseInterface;
  * Class GuzzleHttpConnection
  * @package CrCms\Foundation\ConnectionPool\Connections
  */
-class Connection extends AbstractConnection implements ConnectionContract,ResponseContract
+class Connection extends AbstractConnection implements ConnectionContract, ResponseContract
 {
     /**
      * @var ResponseInterface
      */
     protected $response;
-    
+
     /**
      * @var string
      */
@@ -101,13 +101,7 @@ class Connection extends AbstractConnection implements ConnectionContract,Respon
             return -1;
         }
 
-        if (!is_null($this->statusCode)) {
-            return $this->statusCode;
-        }
-
-        $this->statusCode = $this->response->getStatusCode();
-
-        return $this->statusCode;
+        return $this->response->getStatusCode();
     }
 
     /**
@@ -119,13 +113,7 @@ class Connection extends AbstractConnection implements ConnectionContract,Respon
             return null;
         }
 
-        if (!is_null($this->content)) {
-            return $this->content;
-        }
-
-        $this->content = $this->response->getBody()->getContents();
-
-        return $this->content;
+        return $this->response->getBody()->getContents();
     }
 
     /**

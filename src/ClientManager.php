@@ -19,20 +19,6 @@ use BadMethodCallException;
 use Crcms\Foundation\ConnectionPool\Contracts\Connection;
 
 /**
- * @method string id()
- * @method bool isRelease()
- * @method void makeRelease()
- * @method void makeRecycling()
- * @method bool isAlive()
- * @method void makeAlive()
- * @method void markDead()
- * @method void reconnection()
- * @method Manager request(string $uri, array $data = []);
- * @method mixed getResponse()
- * @method mixed getContent()
- * @method int getLaseActivityTime()
- * @method int getConnectionNumber()
- *
  * Class ClientManager
  * @package CrCms\Foundation\Client
  */
@@ -184,28 +170,6 @@ class ClientManager
 
         return compact('name', 'configure');
     }
-//
-//    /**
-//     * @param string $name
-//     * @param array $arguments
-//     * @return mixed
-//     */
-//    public function __call(string $name, array $arguments)
-//    {
-//        //接手控制权
-//        if ($this->connection instanceof Connection) {
-//            $result = call_user_func_array([$this->connection, $name], $arguments);
-//            if ($result instanceof Connection) {
-//                $this->connection = $result;
-//                return $this;
-//            }
-//
-//            return $result;
-//        }
-//
-//        throw new BadMethodCallException("The method[{$name}] is not exists");
-//    }
-
 
     /**
      * @param string $method
