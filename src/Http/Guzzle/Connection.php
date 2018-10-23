@@ -13,17 +13,24 @@ use CrCms\Foundation\Client\Http\Contracts\ResponseContract;
 use CrCms\Foundation\ConnectionPool\AbstractConnection;
 use CrCms\Foundation\ConnectionPool\Exceptions\ConnectionException;
 use CrCms\Foundation\ConnectionPool\Contracts\Connection as ConnectionContract;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use CrCms\Foundation\ConnectionPool\Exceptions\RequestException as ConnectionPoolRequestException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class GuzzleHttpConnection
  * @package CrCms\Foundation\ConnectionPool\Connections
  */
-class Connection extends AbstractConnection implements ConnectionContract, ResponseContract
+class Connection extends AbstractConnection implements ConnectionContract,ResponseContract
 {
+    /**
+     * @var ResponseInterface
+     */
+    protected $response;
+    
     /**
      * @var string
      */
@@ -122,12 +129,36 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
     }
 
     /**
-     * @param string $uri
-     * @param array $data
-     * @return ConnectionContract
+     * @return ResponseInterface
      */
-    public function send(string $uri, array $data = []): AbstractConnection
+    public function getResponse(): ResponseInterface
     {
+        return $this->response;
+    }
+
+    /**
+     * @return Client
+     */
+    public function connect(): Client
+    {
+        $config = $this->config;
+        $config['base_uri'] = $this->baseUri($this->scheme($config['verify'] ?? false), $config);
+        return new Client($config);
+    }
+
+    /**
+     * @param mixed ...$params
+     * @return Connection
+     */
+    public function handle(...$params): self
+    {
+        /* @var string $uri */
+        $uri = $params[0];
+        /* @var array $data */
+        $data = $params[1] ?? [];
+
+        $data = $this->resolve($data);
+
         $options = [];
         $options['headers'] = $this->headers;
 
@@ -152,5 +183,24 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
         }
 
         return $this;
+    }
+
+    /**
+     * @param array $settings
+     * @return string
+     */
+    protected function scheme(bool $verify): string
+    {
+        return $verify ? 'https' : 'http';
+    }
+
+    /**
+     * @param string $scheme
+     * @param array $config
+     * @return string
+     */
+    protected function baseUri(string $scheme, array $config): string
+    {
+        return $scheme . '://' . $config['host'] . ':' . $config['port'];
     }
 }

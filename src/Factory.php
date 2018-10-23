@@ -25,21 +25,41 @@ use InvalidArgumentException;
  * Class Factory
  * @package CrCms\Foundation\Rpc\Client
  */
-class Factory extends AbstractConnectionFactory implements ConnectionFactoryContract
+class Factory implements ConnectionFactoryContract
 {
+    /**
+     * @var Container
+     */
+    protected $app;
+
     /**
      * @var array
      */
-    protected $config = [];
+    protected $config;
 
     /**
-     * @param array $config
-     * @return ConnectionFactoryContract
+     * @var string
      */
-    public function config(array $config): ConnectionFactoryContract
-    {
-        $this->config = $config;
+    protected $name;
 
+    /**
+     * Factory constructor.
+     * @param Container $app
+     */
+    public function __construct(Container $app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * @param $name
+     * @param array $config
+     * @return Factory
+     */
+    public function config($name, array $config = []): self
+    {
+        $this->name = $name;
+        $this->config = $config;
         return $this;
     }
 
@@ -48,38 +68,33 @@ class Factory extends AbstractConnectionFactory implements ConnectionFactoryCont
      */
     public function make(): ConnectionContract
     {
-        return $this->createConnection($this->config);
+        return $this->createConnection();
     }
 
     /**
      * @param array $config
      * @return ConnectionContract
      */
-    protected function createConnection(array $config): ConnectionContract
+    protected function createConnection(): ConnectionContract
     {
+        $config = $this->configure($this->name);
+
         switch ($config['driver']) {
             case 'http':
-                return new GuzzleConnection($this->createConnector($config)->connect($config), $config);
+                return new GuzzleConnection($config);
             case 'swoole_http':
-                return new SwooleConnection($this->createConnector($config)->connect($config), $config);
+                return new SwooleConnection($config);
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
     }
 
     /**
-     * @param string $driver
-     * @return ConnectorContract
+     * @param string $name
+     * @return array
      */
-    protected function createConnector(array $config): ConnectorContract
+    protected function configure(string $name): array
     {
-        switch ($config['driver']) {
-            case 'http':
-                return new GuzzleConnector;
-            case 'swoole_http':
-                return new SwooleConnector;
-        }
-
-        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
+        return $this->app->make('config')->get("client.connections.{$name}", $this->config);
     }
 }

@@ -24,7 +24,6 @@ class ClientServiceProvider extends ServiceProvider
      */
     protected $defer = true;
 
-
     /**
      * @var string
      */
@@ -79,7 +78,7 @@ class ClientServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('client.manager', function ($app) {
-            return new Manager($app, $app->make('client.factory'), $app->make('pool.manager'));
+            return new ClientManager($app, $app->make('client.factory'), $app->make('pool.manager'));
         });
     }
 
@@ -89,7 +88,7 @@ class ClientServiceProvider extends ServiceProvider
     protected function registerAlias(): void
     {
         $this->app->alias('client.factory', Factory::class);
-        $this->app->alias('client.manager', Manager::class);
+        $this->app->alias('client.manager', ClientManager::class);
     }
 
     /**

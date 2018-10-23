@@ -2,6 +2,8 @@
 
 namespace CrCms\Foundation\Client\Http\Contracts;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Interface ResponseContract
  * @package CrCms\Foundation\Client\Contracts
@@ -17,4 +19,9 @@ interface ResponseContract
      * @return mixed
      */
     public function getContent();
+
+    /**
+     * @return ResponseInterface
+     */
+    public function getResponse(): ResponseInterface;
 }

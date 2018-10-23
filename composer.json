@@ -13,6 +13,7 @@
   "require": {
     "php": ">=7.1",
     "guzzlehttp/guzzle": "^6.3",
+    "psr/http-message": "~1.0",
     "crcms/connection-pool": "dev-master"
   },
   "autoload": {
