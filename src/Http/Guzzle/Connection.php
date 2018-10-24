@@ -129,9 +129,9 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
      */
     public function connect(): Client
     {
-        $config = $this->config;
-        $config['base_uri'] = $this->baseUri($this->scheme($config['verify'] ?? false), $config);
-        return new Client($config);
+        $settings = $this->config['settings'] ?? [];
+        $settings['base_uri'] = $this->baseUri($this->scheme($settings['verify'] ?? false), $this->config);
+        return new Client($settings);
     }
 
     /**
