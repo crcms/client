@@ -98,7 +98,7 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
     public function getStatusCode(): int
     {
         if (is_null($this->response)) {
-            return -1;
+            return 502;
         }
 
         return $this->response->getStatusCode();
@@ -163,6 +163,7 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
         try {
             $this->response = $this->connector->request($this->method, $uri, $options);
         } catch (ConnectException $exception) {
+            $this->response = $exception->getResponse();
             throw new ConnectionException($this, 'Connection failed: ' . $exception->getMessage());
         } catch (RequestException | ClientException $exception) {
             //400+可能是请求方法或参数错误，不可视为超时或服务器error
