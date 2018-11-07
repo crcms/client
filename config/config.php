@@ -44,5 +44,13 @@ return [
                 'timeout' => 1,
             ],
         ],
+        'yar' => [
+            'driver' => 'yar',
+            'host' => '192.169.1.12',
+            'port' => 80,
+            'settings' => [
+                'timeout' => 1,
+            ],
+        ],
     ],
 ];

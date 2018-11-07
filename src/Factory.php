@@ -18,6 +18,7 @@ use CrCms\Foundation\Client\Http\Guzzle\Connection as GuzzleConnection;
 use CrCms\Foundation\Client\Http\Guzzle\Connector as GuzzleConnector;
 use CrCms\Foundation\Client\Http\Swoole\Connection as SwooleConnection;
 use CrCms\Foundation\Client\Http\Swoole\Connector as SwooleConnector;
+use CrCms\Foundation\Client\Yar\Connection as YarConnector;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
@@ -84,6 +85,8 @@ class Factory implements ConnectionFactoryContract
                 return new GuzzleConnection($config);
             case 'swoole_http':
                 return new SwooleConnection($config);
+            case 'yar':
+                return new YarConnector($config);
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
