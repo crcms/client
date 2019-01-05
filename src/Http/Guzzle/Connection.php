@@ -76,8 +76,9 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
     /**
      * @param string $path
      * @param array $data
+     * @return mixed
      */
-    protected function resolve(array $data): array
+    protected function resolve(array $data)
     {
         if (!empty($data['method'])) {
             $this->setMethod($data['method']);
@@ -89,7 +90,7 @@ class Connection extends AbstractConnection implements ConnectionContract, Respo
             unset($data['headers']);
         }
 
-        return $data['payload'] ?? [];
+        return $data['payload'] ?? null;
     }
 
     /**
