@@ -98,6 +98,7 @@ class Factory implements ConnectionFactoryContract
      */
     protected function configure(string $name): array
     {
-        return $this->app->make('config')->get("client.connections.{$name}", $this->config);
+        $config = $this->app->make('config')->get("client.connections.{$name}", []);
+        return array_merge($config, $this->config);
     }
 }
